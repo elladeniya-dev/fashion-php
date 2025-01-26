@@ -1,0 +1,121 @@
+
+body {
+    background-image: url("Rainbow Gradient Pink and Purple Virtual Background.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+
+  
+  
+  body {
+    background-color: rgb(0, 253, 17);
+    background-size: cover;
+    font-family: 'Roboto', sans-serif;
+  }
+    
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: .2s;
+    outline: none;
+    text-transform: capitalize;
+    text-decoration: none;
+}
+html{
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 7%;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    z-index: 100000;
+}
+.header #logo{
+    font-size: 3.5rem;
+    color: black;
+}
+.navbar a{
+    color: black;
+    font-size: 1.7rem;
+    margin-left: 1rem;
+}
+.navbar a:hover{
+    background-color: #ccccd1;
+    color: white;
+    border-radius: 10px;
+    padding: 1rem 3rem;
+}
+.login-btn,
+.signup-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    text-decoration: none;
+    color: #000000;
+    background-color: #ffffff; 
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    font-size: 1.7rem;
+    margin-left: 1rem;
+    border-radius: 10px;
+    padding: 1rem 3rem;
+    transition: .2s;
+}
+
+.login-btn:hover,
+.signup-btn:hover {
+    background-color: #ccccd1
+}
+img1 {
+  width: 400px; 
+  height: 600px;
+  position:relative;
+  left: 850px;
+  top: 10px;
+}
+
+p {
+  text-align: left;
+}
+
+.about {  
+  text-align: left;
+  width: 840px;
+  position: relative;
+  top: -520px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.about2 {  
+  text-align: left;
+  width: 840px;
+  position:relative;
+  top: -500px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+h2 {
+  position: relative;
+  top: -500px;
+  font-weight: bold;
+
+}
+h1{
+
+  position: relative;
+  top: 110px;
+  font-weight:bold;
+}

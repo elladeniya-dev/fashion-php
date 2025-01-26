@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="login.css">
+    <style>.btn {
+        width:100%;
+        height:45px;
+        background: #7c3d82;
+        border:none;
+        outline:none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        color: #fff;
+        font-weight: 500;
+    }</style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="form-box login">
+        <h2>Admin Login</h2>
+        <form action="admin login.php" method="post"> 
+            <div class="input-box">
+                <span class="icon"></span>
+                <input type="text" required name="username"> 
+                <label>Username</label>
+            </div>
+            <div class="input-box">
+                <span class="icon"></span>
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+            <div class="remember-forgot">
+                <label><input type="checkbox">
+                Remember me</label>
+                <a href="#">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn" name="login">Login</button>
+            <div class="login-register">
+                <p><a href="supplier login.html"
+                class="register-link">Supplier Login</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
