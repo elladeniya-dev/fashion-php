@@ -9,6 +9,29 @@ require_once __DIR__ . '/../../../config/database.php';
 
 $message = '';
 
+function logActivity($conn, $actorType, $actorId, $action, $details = '') {
+    $stmt = $conn->prepare('INSERT INTO activity_logs (actor_type, actor_id, action, details) VALUES (?, ?, ?, ?)');
+    $stmt->bind_param('siss', $actorType, $actorId, $action, $details);
+    $stmt->execute();
+    $stmt->close();
+}
+
+function autoCancelStaleOrders($conn, $days = 3) {
+    $stmt = $conn->prepare("UPDATE orders SET status = 'cancelled' WHERE status IN ('pending','approved') AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
+    $stmt->bind_param('i', $days);
+    $stmt->execute();
+    $stmt->close();
+}
+
+autoCancelStaleOrders($conn, 3);
+
+function logActivity($conn, $actorType, $actorId, $action, $details = '') {
+    $stmt = $conn->prepare('INSERT INTO activity_logs (actor_type, actor_id, action, details) VALUES (?, ?, ?, ?)');
+    $stmt->bind_param('siss', $actorType, $actorId, $action, $details);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Helper to fetch order items
 function getOrderItems($conn, $orderId) {
     $items = [];
@@ -93,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $conn->commit();
                     $message = 'Order approved and stock reserved.';
+                    logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'order_approved', 'Order #' . $orderId . ' approved and stock reserved');
                 }
                 $stockStmt->close();
             } elseif ($action === 'ready') {
@@ -101,18 +125,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $up->execute();
                 $up->close();
                 $message = 'Order marked ready.';
+                logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'order_ready', 'Order #' . $orderId . ' marked ready');
             } elseif ($action === 'completed') {
                 $up = $conn->prepare("UPDATE orders SET status = 'completed' WHERE id = ?");
                 $up->bind_param('i', $orderId);
                 $up->execute();
                 $up->close();
                 $message = 'Order completed.';
+                logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'order_completed', 'Order #' . $orderId . ' completed');
             } elseif ($action === 'cancel') {
                 $up = $conn->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ?");
                 $up->bind_param('i', $orderId);
                 $up->execute();
                 $up->close();
                 $message = 'Order cancelled.';
+                logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'order_cancelled', 'Order #' . $orderId . ' cancelled');
             }
         }
     }

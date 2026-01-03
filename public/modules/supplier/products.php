@@ -101,6 +101,13 @@ if (!$supplierData || $supplierData['status'] !== 'approved') {
 
 $message = '';
 
+function logActivity($conn, $actorType, $actorId, $action, $details = '') {
+    $stmt = $conn->prepare('INSERT INTO activity_logs (actor_type, actor_id, action, details) VALUES (?, ?, ?, ?)');
+    $stmt->bind_param('siss', $actorType, $actorId, $action, $details);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Handle create
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
@@ -117,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param('iissdis', $supplierId, $categoryId, $name, $description, $price, $stock, $status);
         if ($stmt->execute()) {
             $message = 'Product submitted for approval.';
+            logActivity($conn, 'supplier', $supplierId, 'product_submitted', 'Product submitted for approval: ' . $name);
         } else {
             $message = 'Error creating product: ' . $conn->error;
         }
@@ -133,6 +141,56 @@ if ($res = $conn->query("SELECT id, name FROM categories ORDER BY name")) {
     $res->free();
 }
 
+// Insights
+$insights = [
+    'top_product' => null,
+    'pending_orders' => 0,
+    'low_stock' => 0,
+];
+
+$topSql = "SELECT p.name, SUM(oi.quantity) AS total_qty
+           FROM order_items oi
+           JOIN orders o ON oi.order_id = o.id
+           JOIN products p ON oi.product_id = p.id
+           WHERE p.supplier_id = ? AND o.status IN ('approved','ready','completed')
+           GROUP BY p.id, p.name
+           ORDER BY total_qty DESC
+           LIMIT 1";
+$topStmt = $conn->prepare($topSql);
+$topStmt->bind_param('i', $supplierId);
+if ($topStmt->execute()) {
+    $topRes = $topStmt->get_result();
+    if ($row = $topRes->fetch_assoc()) {
+        $insights['top_product'] = $row;
+    }
+    $topRes->free();
+}
+$topStmt->close();
+
+$pendingOrderSql = "SELECT COUNT(DISTINCT o.id) AS c
+                    FROM orders o
+                    JOIN order_items oi ON oi.order_id = o.id
+                    JOIN products p ON oi.product_id = p.id
+                    WHERE p.supplier_id = ? AND o.status = 'pending'";
+$poStmt = $conn->prepare($pendingOrderSql);
+$poStmt->bind_param('i', $supplierId);
+if ($poStmt->execute()) {
+    $poRes = $poStmt->get_result();
+    if ($row = $poRes->fetch_assoc()) { $insights['pending_orders'] = (int)$row['c']; }
+    $poRes->free();
+}
+$poStmt->close();
+
+$lowStockCountSql = "SELECT COUNT(*) AS c FROM products WHERE supplier_id = ? AND stock_qty < 10";
+$lsStmt = $conn->prepare($lowStockCountSql);
+$lsStmt->bind_param('i', $supplierId);
+if ($lsStmt->execute()) {
+    $lsRes = $lsStmt->get_result();
+    if ($row = $lsRes->fetch_assoc()) { $insights['low_stock'] = (int)$row['c']; }
+    $lsRes->free();
+}
+$lsStmt->close();
+
 // Fetch supplier products
 $products = [];
 $productSql = "SELECT p.id, p.name, p.status, p.stock_qty, p.price, p.created_at, c.name AS category_name
@@ -143,6 +201,19 @@ $productSql = "SELECT p.id, p.name, p.status, p.stock_qty, p.price, p.created_at
 if ($res = $conn->query($productSql)) {
     while ($row = $res->fetch_assoc()) {
         $products[] = $row;
+    }
+    $res->free();
+}
+
+// Low stock items for quick attention
+$lowStockProducts = [];
+$lowStockSql = "SELECT id, name, stock_qty, status
+                FROM products
+                WHERE supplier_id = $supplierId AND stock_qty < 10
+                ORDER BY stock_qty ASC, id ASC";
+if ($res = $conn->query($lowStockSql)) {
+    while ($row = $res->fetch_assoc()) {
+        $lowStockProducts[] = $row;
     }
     $res->free();
 }
@@ -176,6 +247,10 @@ $conn->close();
         .status.rejected { background: #fdecea; color: #c53030; }
         .status.low { background: #ffe6e6; color: #b11a1a; }
         .message { margin-bottom: 12px; padding: 10px 12px; border-radius: 6px; background: #e8f0fe; color: #1a54b3; }
+        .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0 20px; }
+        .insight { background: #fff; border-radius: 8px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .insight h4 { margin: 0 0 6px; font-size: 14px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; }
+        .insight strong { font-size: 18px; color: #2d2f83; }
     </style>
 </head>
 <body>
@@ -189,6 +264,58 @@ $conn->close();
             <a href="../admin/login.html">Logout</a>
         </div>
     </header>
+
+    <div class="insights-grid" style="margin-top:12px;">
+        <div class="insight">
+            <h4>Top Selling Product</h4>
+            <?php if ($insights['top_product']): ?>
+                <strong><?php echo htmlspecialchars($insights['top_product']['name']); ?></strong>
+                <div style="color:#555;">Total units: <?php echo (int)$insights['top_product']['total_qty']; ?></div>
+            <?php else: ?>
+                <div style="color:#777;">No sales yet.</div>
+            <?php endif; ?>
+        </div>
+        <div class="insight">
+            <h4>Orders Awaiting Approval</h4>
+            <strong><?php echo (int)$insights['pending_orders']; ?></strong>
+            <div style="color:#555;">Customer orders waiting on admin</div>
+        </div>
+        <div class="insight">
+            <h4>Products Running Low</h4>
+            <strong><?php echo (int)$insights['low_stock']; ?></strong>
+            <div style="color:#555;">Stock below 10 units</div>
+        </div>
+    </div>
+
+    <div style="padding: 16px 20px 0 20px;">
+        <div class="card" style="margin-bottom:12px;">
+            <h3>Low Stock Alerts (&lt;10)</h3>
+            <?php if (empty($lowStockProducts)): ?>
+                <p style="margin:8px 0 0; color:#0f7a43; font-weight:600;">All items are healthy.</p>
+            <?php else: ?>
+                <table style="margin-top:8px;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($lowStockProducts as $item): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($item['id']); ?></td>
+                                <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                <td><span class="status <?php echo htmlspecialchars($item['status']); ?>">&nbsp;<?php echo htmlspecialchars($item['status']); ?>&nbsp;</span></td>
+                                <td><span class="status low"><?php echo htmlspecialchars($item['stock_qty']); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+    </div>
 
     <div class="layout">
         <div class="card">

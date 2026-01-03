@@ -9,6 +9,13 @@ require_once __DIR__ . '/../../../config/database.php';
 
 $message = '';
 
+function logActivity($conn, $actorType, $actorId, $action, $details = '') {
+    $stmt = $conn->prepare('INSERT INTO activity_logs (actor_type, actor_id, action, details) VALUES (?, ?, ?, ?)');
+    $stmt->bind_param('siss', $actorType, $actorId, $action, $details);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Handle actions: approve, reject, update stock
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pid = (int)($_POST['product_id'] ?? 0);
@@ -20,12 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('i', $pid);
             $stmt->execute();
             $message = 'Product approved.';
+            logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'product_approved', 'Product #' . $pid . ' approved');
             $stmt->close();
         } elseif ($action === 'reject') {
             $stmt = $conn->prepare("UPDATE products SET status = 'rejected' WHERE id = ?");
             $stmt->bind_param('i', $pid);
             $stmt->execute();
             $message = 'Product rejected.';
+            logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'product_rejected', 'Product #' . $pid . ' rejected');
             $stmt->close();
         } elseif ($action === 'update') {
             $stock = max(0, (int)($_POST['stock_qty'] ?? 0));
@@ -34,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('idi', $stock, $price, $pid);
             $stmt->execute();
             $message = 'Product updated.';
+            logActivity($conn, 'admin', (int)$_SESSION['Admin_id'], 'product_updated', 'Product #' . $pid . ' stock/price updated');
             $stmt->close();
         }
     }

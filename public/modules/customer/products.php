@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Product not available.';
     } elseif ((int)$product['stock_qty'] <= 0) {
         $message = 'Out of stock.';
+    } elseif ($qty > (int)$product['stock_qty']) {
+        $message = 'Requested quantity exceeds available stock.';
     } else {
         $linePrice = (float)$product['price'];
         $total = $linePrice * $qty;
@@ -116,6 +118,7 @@ $conn->close();
         </div>
         <div class="top-links">
             <a href="details.php">Profile</a>
+            <a href="orders.php">Order History</a>
             <a href="login.html">Logout</a>
         </div>
     </header>

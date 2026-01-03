@@ -7,6 +7,16 @@ if (!isset($_SESSION['Admin_id'])) {
 
 require_once __DIR__ . '/../../../config/database.php';
 
+// Auto-cancel stale orders (business rule)
+function autoCancelStaleOrders($conn, $days = 3) {
+    $stmt = $conn->prepare("UPDATE orders SET status = 'cancelled' WHERE status IN ('pending','approved') AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
+    $stmt->bind_param('i', $days);
+    $stmt->execute();
+    $stmt->close();
+}
+
+autoCancelStaleOrders($conn, 3);
+
 // Aggregate counts
 $counts = [
     'customers' => 0,
@@ -64,6 +74,65 @@ if ($res = $conn->query($productSql)) {
     $res->free();
 }
 
+// Low stock products for quick attention
+$lowStockProducts = [];
+$lowStockSql = "SELECT p.id, p.name, p.stock_qty, s.name AS supplier_name
+                FROM products p
+                JOIN supplier s ON p.supplier_id = s.sid
+                WHERE p.stock_qty < 10
+                ORDER BY p.stock_qty ASC, p.id ASC
+                LIMIT 6";
+if ($res = $conn->query($lowStockSql)) {
+    while ($row = $res->fetch_assoc()) {
+        $lowStockProducts[] = $row;
+    }
+    $res->free();
+}
+
+// Pending products requiring approval
+$pendingProducts = [];
+$pendingProductSql = "SELECT p.id, p.name, s.name AS supplier_name, p.created_at
+                      FROM products p
+                      JOIN supplier s ON p.supplier_id = s.sid
+                      WHERE p.status = 'pending'
+                      ORDER BY p.created_at DESC
+                      LIMIT 6";
+if ($res = $conn->query($pendingProductSql)) {
+    while ($row = $res->fetch_assoc()) {
+        $pendingProducts[] = $row;
+    }
+    $res->free();
+}
+
+// Orders placed today
+$todayOrders = [];
+$todayOrderSql = "SELECT o.id, o.status, o.total, o.created_at, c.name AS customer_name
+                  FROM orders o
+                  JOIN customer c ON o.customer_id = c.cid
+                  WHERE DATE(o.created_at) = CURDATE()
+                  ORDER BY o.created_at DESC
+                  LIMIT 6";
+if ($res = $conn->query($todayOrderSql)) {
+    while ($row = $res->fetch_assoc()) {
+        $todayOrders[] = $row;
+    }
+    $res->free();
+}
+
+// Weekly order summary (counts per day)
+$weeklyOrders = [];
+$weeklySql = "SELECT DATE(created_at) AS day, COUNT(*) AS total
+              FROM orders
+              WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+              GROUP BY DATE(created_at)
+              ORDER BY day ASC";
+if ($res = $conn->query($weeklySql)) {
+    while ($row = $res->fetch_assoc()) {
+        $weeklyOrders[] = $row;
+    }
+    $res->free();
+}
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -94,6 +163,9 @@ $conn->close();
         .status.low { background: #ffe6e6; color: #b11a1a; }
         .actions a { color: #2d2f83; text-decoration: none; font-weight: 600; }
         .top-links a { color: #fff; margin-left: 16px; text-decoration: none; font-weight: 600; }
+        .today-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .today-grid table { box-shadow: none; }
+        .today-grid th { background: #f7f7fb; }
     </style>
 </head>
 <body>
@@ -120,6 +192,113 @@ $conn->close();
         <div class="card alert"><h3>Pending Products</h3><div class="value"><?php echo $counts['pending_products']; ?></div></div>
         <div class="card warning"><h3>Low Stock (&lt;10)</h3><div class="value"><?php echo $counts['low_stock']; ?></div></div>
     </div>
+
+    <section>
+        <h3>Today View</h3>
+        <div class="today-grid">
+            <div class="card">
+                <h3>Low Stock Alerts</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($lowStockProducts)): ?>
+                            <tr><td colspan="3">Stock levels look good.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($lowStockProducts as $item): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($item['id']); ?></td>
+                                    <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                    <td><span class="status low"><?php echo htmlspecialchars($item['stock_qty']); ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Pending Products</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Supplier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($pendingProducts)): ?>
+                            <tr><td colspan="3">No pending submissions.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($pendingProducts as $p): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($p['id']); ?></td>
+                                    <td><?php echo htmlspecialchars($p['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($p['supplier_name']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>New Orders Today</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($todayOrders)): ?>
+                            <tr><td colspan="3">No orders today.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($todayOrders as $order): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($order['id']); ?></td>
+                                    <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
+                                    <td><span class="status <?php echo htmlspecialchars($order['status']); ?>"><?php echo htmlspecialchars($order['status']); ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Weekly Orders (7d)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($weeklyOrders)): ?>
+                            <tr><td colspan="2">No orders in the past week.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($weeklyOrders as $w): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($w['day']); ?></td>
+                                    <td><?php echo htmlspecialchars($w['total']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
     <section>
         <h3>Recent Orders</h3>
