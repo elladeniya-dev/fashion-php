@@ -15,6 +15,26 @@ if (isset($_POST['login'])) {
     $result = mysqli_stmt_get_result($stmt);
 
     if ($row = mysqli_fetch_assoc($result)) {
+        // Check supplier status first
+        $supplierId = $row['sid'];
+        $statusQuery = "SELECT status FROM supplier WHERE sid = ? LIMIT 1";
+        $statusStmt = mysqli_prepare($conn, $statusQuery);
+        mysqli_stmt_bind_param($statusStmt, "i", $supplierId);
+        mysqli_stmt_execute($statusStmt);
+        $statusResult = mysqli_stmt_get_result($statusStmt);
+        $supplierData = mysqli_fetch_assoc($statusResult);
+        mysqli_stmt_close($statusStmt);
+
+        if (!$supplierData || $supplierData['status'] === 'pending') {
+            header("Location: login.html?error=pending_approval");
+            exit();
+        }
+
+        if ($supplierData['status'] === 'rejected') {
+            header("Location: login.html?error=account_rejected");
+            exit();
+        }
+
         // Check if the provided password matches the password in the database
         $storedPassword = $row['password'];
         $isValid = password_verify($password, $storedPassword) || $password === $storedPassword; // legacy fallback

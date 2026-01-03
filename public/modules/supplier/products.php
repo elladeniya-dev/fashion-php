@@ -8,6 +8,97 @@ if (!isset($_SESSION['sid'])) {
 require_once __DIR__ . '/../../../config/database.php';
 
 $supplierId = (int) $_SESSION['sid'];
+
+// Check supplier approval status
+$statusQuery = "SELECT status FROM supplier WHERE sid = ? LIMIT 1";
+$statusStmt = $conn->prepare($statusQuery);
+$statusStmt->bind_param('i', $supplierId);
+$statusStmt->execute();
+$statusResult = $statusStmt->get_result();
+$supplierData = $statusResult->fetch_assoc();
+$statusStmt->close();
+
+if (!$supplierData || $supplierData['status'] !== 'approved') {
+    // Supplier not approved, show message
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Account Pending Approval</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .message-container {
+                background: white;
+                border-radius: 20px;
+                padding: 60px 40px;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                max-width: 500px;
+            }
+            h1 {
+                color: #c53030;
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+            p {
+                color: #666;
+                font-size: 16px;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+            .status-badge {
+                display: inline-block;
+                padding: 10px 20px;
+                background: #fff6e5;
+                color: #b36b00;
+                border-radius: 20px;
+                font-weight: 600;
+                margin-bottom: 30px;
+            }
+            a {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: transform 0.2s ease;
+            }
+            a:hover {
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="message-container">
+            <h1>Account Pending Approval</h1>
+            <span class="status-badge"><?php echo ucfirst($supplierData['status'] ?? 'pending'); ?></span>
+            <p>Your supplier account is waiting for admin approval. You will be able to add products once your account is approved.</p>
+            <p>Please check back later or contact the administrator.</p>
+            <a href="login.html">Back to Login</a>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit();
+}
+
 $message = '';
 
 // Handle create

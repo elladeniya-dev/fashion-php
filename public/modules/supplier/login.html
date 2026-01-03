@@ -215,6 +215,7 @@
             </form>
             <div class="login-footer">
                 <p>Don't have an account? <a href="register.html">Register</a></p>
+                <p id="error-message" style="margin-top:10px;color:#c53030;font-weight:600;"></p>
                 <p style="margin-top:10px">Login as:</p>
                 <div class="role-links">
                     <a href="../admin/login.html">Admin</a>
@@ -223,5 +224,19 @@
             </div>
         </div>
     </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const errorMsg = document.getElementById('error-message');
+        if (error === 'pending_approval') {
+            errorMsg.textContent = '⚠️ Your account is pending admin approval. Please wait.';
+        } else if (error === 'account_rejected') {
+            errorMsg.textContent = '❌ Your account has been rejected. Please contact admin.';
+        } else if (error === 'invalid_password') {
+            errorMsg.textContent = '❌ Invalid password.';
+        } else if (error === 'user_not_found') {
+            errorMsg.textContent = '❌ User not found.';
+        }
+    </script>
 </body>
 </html>
