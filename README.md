@@ -1,201 +1,84 @@
-# Fashion Management System
+🧵 Supplier–Customer Coordination & Inventory-Aware Order Management System
 
-A professional PHP-based fashion management system with separate portals for admin, customers, and suppliers.
+A full-stack PHP & MySQL web application designed for small fashion retail and wholesale operations, providing structured coordination between admins, suppliers, and customers—without the complexity of a full ERP system.
 
-## 📁 Project Structure
+🚀 What This System Does
+👑 Admin Capabilities
 
-```
-fashion-php/
-├── config/                  # Configuration files
-│   └── database.php        # Database connection settings
-│
-├── public/                 # Public entry point (web root)
-│   ├── index.php          # Main landing page
-│   ├── about.html         # About page
-│   ├── login.html         # General login page
-│   ├── page.html          # Additional page
-│   └── assets/            # Static assets
-│       ├── css/           # Stylesheets
-│       │   ├── style.css
-│       │   ├── login.css
-│       │   ├── about.css
-│       │   └── button.css
-│       └── images/        # Image files
-│
-├── modules/               # Application modules
-│   ├── admin/            # Admin module
-│   │   ├── login.html
-│   │   └── login.php
-│   │
-│   ├── customer/         # Customer module
-│   │   ├── login.html
-│   │   ├── login.php
-│   │   ├── register.html
-│   │   ├── registration.php
-│   │   ├── profile.php
-│   │   ├── details.php
-│   │   ├── update.html
-│   │   ├── update.php
-│   │   └── delete.php
-│   │
-│   └── supplier/         # Supplier module
-│       ├── login.html
-│       ├── login.php
-│       ├── register.html
-│       ├── registration.php
-│       ├── details.php
-│       ├── update.html
-│       ├── update.php
-│       └── delete.php
-│
-├── includes/             # Shared utilities and helpers
-│
-└── Log/                  # Legacy log files (to be migrated)
-```
+            📊 “Today View” dashboard – low-stock alerts, pending supplier products, today’s orders, and weekly order counts
 
-## 🚀 Setup Instructions
+            ✅ Approve / reject supplier products before they become visible to customers
 
-### Prerequisites
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- Apache/Nginx web server
-- Web browser
+            📦 Order control – approve, cancel, or auto-expire stale orders (SLA-based)
 
-### Installation Steps
+            🚨 Inventory monitoring with low-stock warnings
 
-1. **Clone or download the project**
-   ```bash
-   cd d:\ProjectFiles\fashion-php
-   ```
+            🧾 Audit logging – all critical actions (approvals, cancellations, auto-expiry) are recorded
 
-2. **Configure the database**
-   - Create a MySQL database named `fashion`
-   - Update database credentials in `config/database.php`:
-     ```php
-     $servername = "localhost";
-     $username = "root";
-     $password = "your_password";
-     $db = "fashion";
-     ```
+🧵 Supplier Capabilities
 
-3. **Import database schema**
-   - Create necessary tables:
-     - `admin`
-     - `customer_login_details`
-     - `supplier_login_details`
+            ➕ Submit products for admin approval
 
-4. **Configure web server**
-   - Set document root to `public/` directory
-   - Enable mod_rewrite (for Apache)
-   - Configure PHP to allow file uploads if needed
+            📦 Manage inventory (stock levels & pricing)
 
-5. **Set permissions**
-   ```bash
-   # Linux/Mac
-   chmod -R 755 fashion-php/
-   chmod -R 775 fashion-php/public/assets/
-   ```
+            ⚠️ Low-stock alerts for timely restocking
 
-## 🌐 Access Points
+            📈 Supplier insights – top-selling items, pending approvals, low-stock count
 
-- **Home Page**: `http://localhost/index.php`
-- **Admin Login**: `http://localhost/../modules/admin/login.html`
-- **Customer Portal**: `http://localhost/../modules/customer/login.html`
-- **Supplier Portal**: `http://localhost/../modules/supplier/login.html`
+👤 Customer Capabilities
 
-## 📋 Professional Naming Conventions
+            🛍️ Browse only approved & in-stock products
 
-All files now follow professional naming standards:
-- ✅ **Lowercase filenames** - No uppercase characters in filenames
-- ✅ **No spaces** - Using underscores or hyphens where needed
-- ✅ **Descriptive names** - Clear purpose indicated by filename
-- ✅ **Consistent patterns** - Same naming across all modules
-- ✅ **Module organization** - Files grouped logically by functionality
+            🛒 Place stock-validated orders (prevents over-ordering or out-of-stock requests)
 
-## 🔒 Security Features
+            📜 Order history & tracking with clear, human-readable status messages
 
-- Prepared statements to prevent SQL injection
-- Session management for authentication
-- Password validation
-- Input sanitization (to be enhanced)
+            🧑‍💼 Profile management
 
-## 📝 Development Guidelines
+🔐 Business Rules & Governance
 
-### Adding New Features
-1. Place module-specific code in the appropriate `modules/` subdirectory
-2. Shared utilities go in `includes/`
-3. Database connections must use `config/database.php`
-4. Static assets go in `public/assets/`
+            🔒 Products require admin approval before customer visibility
 
-### Code Standards
-- Use PSR-12 coding standards
-- Always use prepared statements for database queries
-- Implement proper error handling
-- Add comments for complex logic
-- Never store passwords in plain text (implement password_hash())
+            ❌ Customers cannot order out-of-stock or excess quantities
 
-### Path References
-- Use `__DIR__` for relative includes
-- Database config: `include_once __DIR__ . '/../../config/database.php';`
-- Always use absolute paths when possible
+            ⏳ Orders auto-cancel after SLA if not processed
 
-## 🛠️ Technologies Used
+            🧹 Product deletion respects pending order constraints
 
-- **Backend**: PHP
-- **Database**: MySQL
-- **Frontend**: HTML, CSS
-- **Server**: Apache/Nginx
+            🧾 All critical state changes are audit-logged for traceability
 
-## 📊 Database Schema
+🛠️ Tech Stack
 
-### Tables Required
-```sql
--- Admin table
-CREATE TABLE admin (
-    Admin_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
+            🐘 Backend: PHP 8
 
--- Customer login details
-CREATE TABLE customer_login_details (
-    sid INT PRIMARY KEY AUTO_INCREMENT,
-    uname VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
+            🗄️ Database: MySQL (InnoDB)
 
--- Supplier login details
-CREATE TABLE supplier_login_details (
-    sid INT PRIMARY KEY AUTO_INCREMENT,
-    uname VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
-```
+            🔐 Auth: Session-based authentication with password hashing
 
-## 🔄 Future Improvements
+            🐳 Deployment: Docker & docker-compose (App + DB)
 
-- [ ] Implement password hashing (password_hash/password_verify)
-- [ ] Add CSRF protection
-- [ ] Implement session timeout
-- [ ] Add input validation and sanitization
-- [ ] Create proper error logging system
-- [ ] Implement email verification
-- [ ] Add password reset functionality
-- [ ] Create admin dashboard
-- [ ] Implement role-based access control (RBAC)
-- [ ] Add API endpoints for mobile apps
-- [ ] Implement caching mechanism
-- [ ] Add unit tests
+            🎨 Frontend: HTML & CSS (responsive tables and cards)
 
-## 📞 Support
+            🧩 Architecture: Modular PHP pages with centralized configuration
 
-For issues or questions, please contact the development team.
+🎯 Real-World Use Cases
 
-## 📄 License
+            👗 Small fashion boutiques
 
-Proprietary - All rights reserved
+            🧵 Tailoring shops
 
----
+            🧶 Fabric wholesalers
 
-**Version**: 2.0.0  
-**Last Updated**: January 3, 2026
+            🏪 Supplier-driven retail stores
+
+            🧑‍🤝‍🧑 Small teams needing lightweight workflow control without heavy ERP systems
+
+💡 Why This Project
+
+            🧠 Focuses on real business workflows, not just CRUD
+
+            ⚖️ Enforces inventory integrity and approval gates
+
+            🔍 Emphasizes auditability and accountability
+
+            🚀 Designed to be lightweight, maintainable, and extensible
