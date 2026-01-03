@@ -5,7 +5,6 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 RUN a2enmod rewrite
 
 COPY ./public /var/www/html/public
-COPY ./modules /var/www/html/modules
 COPY ./config /var/www/html/config
 COPY ./includes /var/www/html/includes
 

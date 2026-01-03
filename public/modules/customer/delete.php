@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/../../config/database.php';
+include_once __DIR__ . '/../../../config/database.php';
 
 if (isset($_GET['id'])) {
     $customerId = $_GET['id'];

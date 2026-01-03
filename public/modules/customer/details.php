@@ -73,7 +73,7 @@
     </style>
 </head>
 <body>
-    <?php include_once __DIR__ . '/../../config/database.php'; ?>
+    <?php include_once __DIR__ . '/../../../config/database.php'; ?>
 
     <div class="details">
         <a href="../admin/login.html">Log Out</a>

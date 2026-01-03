@@ -1,5 +1,6 @@
-<?php
-include_once __DIR__ . '/../../config/database.php';
+
+<?php 
+include_once __DIR__ . '/../../../config/database.php';
 ?>
 <html>
     <head></head>
@@ -13,7 +14,7 @@ include_once __DIR__ . '/../../config/database.php';
             $location = $_POST['address'];
             $contact  = $_POST['contact'];
 
-            $sql = "UPDATE customer SET name = ?, email = ?, address = ? WHERE contact = ?";
+            $sql = "UPDATE supplier SET name = ?, email = ?, address = ? WHERE contact = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "sssi", $name, $email, $location, $contact);
             mysqli_stmt_execute($stmt);

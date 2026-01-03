@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/../../config/database.php';
+include_once __DIR__ . '/../../../config/database.php';
 
 
 if (isset($_POST['login'])) {
@@ -16,14 +16,15 @@ if (isset($_POST['login'])) {
 
     if ($row = mysqli_fetch_assoc($result)) {
        
-        if ($password === $row['password']) {
-            
+        $storedPassword = $row['password'];
+        $isValid = password_verify($password, $storedPassword) || $password === $storedPassword; // fallback for legacy plaintext
+
+        if ($isValid) {
             session_start();
             $_SESSION['Admin_id'] = $row['Admin_id'];
-            header("Location: ../supplier/details.php");
+            header("Location: dashboard.php");
             exit();
         } else {
-          
             header("Location: login.html?error=invalid_password");
             exit();
         }

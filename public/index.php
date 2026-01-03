@@ -30,21 +30,21 @@ require_once __DIR__ . '/../config/database.php';
                 <div class="option-card">
                     <h2>Admin Login</h2>
                     <p>Access administrative features</p>
-                    <a href="../modules/admin/login.html" class="btn">Admin Login</a>
+                    <a href="modules/admin/login.html" class="btn">Admin Login</a>
                 </div>
                 
                 <div class="option-card">
                     <h2>Customer Portal</h2>
                     <p>Manage your account and orders</p>
-                    <a href="../modules/customer/login.html" class="btn">Customer Login</a>
-                    <a href="../modules/customer/register.html" class="btn-secondary">Register</a>
+                    <a href="modules/customer/login.html" class="btn">Customer Login</a>
+                    <a href="modules/customer/register.html" class="btn-secondary">Register</a>
                 </div>
                 
                 <div class="option-card">
                     <h2>Supplier Portal</h2>
                     <p>Supplier management and inventory</p>
-                    <a href="../modules/supplier/login.html" class="btn">Supplier Login</a>
-                    <a href="../modules/supplier/register.html" class="btn-secondary">Register</a>
+                    <a href="modules/supplier/login.html" class="btn">Supplier Login</a>
+                    <a href="modules/supplier/register.html" class="btn-secondary">Register</a>
                 </div>
             </div>
             

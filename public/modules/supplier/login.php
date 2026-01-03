@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include_once __DIR__ . '/../../config/database.php';
+include_once __DIR__ . '/../../../config/database.php';
 
 // Check if the login form is submitted
 if (isset($_POST['login'])) {
@@ -16,14 +16,15 @@ if (isset($_POST['login'])) {
 
     if ($row = mysqli_fetch_assoc($result)) {
         // Check if the provided password matches the password in the database
-        if ($password === $row['password']) {
-            // Password is correct, set session variable and redirect to supplier details
+        $storedPassword = $row['password'];
+        $isValid = password_verify($password, $storedPassword) || $password === $storedPassword; // legacy fallback
+
+        if ($isValid) {
             session_start();
             $_SESSION['sid'] = $row['sid']; // You can store other user data in the session as needed
-            header("Location: details.php");
+            header("Location: products.php");
             exit();
         } else {
-            // Invalid password
             header("Location: login.html?error=invalid_password"); // Changed to supplier login page
             exit();
         }
