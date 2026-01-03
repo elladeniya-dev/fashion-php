@@ -9,7 +9,7 @@
     <div class="profile">
         <?php
         
-        include_once 'server.php';
+        include_once __DIR__ . '/../../config/database.php';
 
 
         $customer_id = 1;

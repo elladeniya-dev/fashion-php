@@ -1,0 +1,54 @@
+# PHP
+*.log
+*.cache
+vendor/
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Config
+config/database.php
+
+# Sensitive
+*.key
+*.pem
+*.cert
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Uploads
+uploads/
+files/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Build
+dist/
+build/
+
+# Node (if using frontend build tools)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*

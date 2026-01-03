@@ -1,35 +1,35 @@
 <?php
 
-include_once 'server.php';
+include_once __DIR__ . '/../../config/database.php';
 
 
 if (isset($_POST['login'])) {
-    $email = $_POST['username'];
+    $username = $_POST['uname']; 
     $password = $_POST['password'];
 
-   
-    $query = "SELECT * FROM admin WHERE username = ? LIMIT 1";
+    
+    $query = "SELECT * FROM customer_login_details WHERE uname = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
     if ($row = mysqli_fetch_assoc($result)) {
-       
+        
         if ($password === $row['password']) {
-            
+       
             session_start();
-            $_SESSION['Admin_id'] = $row['Admin_id'];
-            header("Location: supplier details.php");
+            $_SESSION['sid'] = $row['sid']; 
+            header("Location: profile.php");
             exit();
         } else {
-          
-            header("Location: admin login.html?error=invalid_password");
+           
+            header("Location: login.html?error=invalid_password");
             exit();
         }
     } else {
-   
-        header("Location: admin login.html?error=user_not_found");
+     
+        header("Location: login.html?error=user_not_found"); 
         exit();
     }
 

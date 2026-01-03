@@ -1,5 +1,5 @@
 <?php
-include_once 'server.php';
+include_once __DIR__ . '/../../config/database.php';
 
 if (isset($_GET['id'])) {
     $customerId = $_GET['id'];
@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
     $deleteResult = mysqli_query($conn, $deleteQuery);
 
     if ($deleteResult) {
-        header("Location: customer details.php");
+        header("Location: details.php");
     } else {
         echo "Error deleting customer record: " . mysqli_error($conn);
     }

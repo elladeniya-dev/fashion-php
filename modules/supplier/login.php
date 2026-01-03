@@ -1,6 +1,6 @@
 <?php
-// Include your database connection script (server.php or similar)
-include_once 'server.php';
+// Include database connection
+include_once __DIR__ . '/../../config/database.php';
 
 // Check if the login form is submitted
 if (isset($_POST['login'])) {
@@ -20,16 +20,16 @@ if (isset($_POST['login'])) {
             // Password is correct, set session variable and redirect to supplier details
             session_start();
             $_SESSION['sid'] = $row['sid']; // You can store other user data in the session as needed
-            header("Location: supplier details.php");
+            header("Location: details.php");
             exit();
         } else {
             // Invalid password
-            header("Location: supplier login.html?error=invalid_password"); // Changed to supplier login page
+            header("Location: login.html?error=invalid_password"); // Changed to supplier login page
             exit();
         }
     } else {
         // User not found
-        header("Location: supplier login.html?error=user_not_found"); // Changed to supplier login page
+        header("Location: login.html?error=user_not_found"); // Changed to supplier login page
         exit();
     }
 

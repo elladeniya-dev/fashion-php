@@ -1,6 +1,6 @@
 
 <?php 
-include_once 'server.php';
+include_once __DIR__ . '/../../config/database.php';
 ?>
 <html>
     <head></head>

@@ -1,5 +1,5 @@
 <?php
-include_once 'server.php';
+include_once __DIR__ . '/../../config/database.php';
 
 if (isset($_GET['id'])) {
     $customerId = $_GET['id'];
@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
 
 
     if ($deleteResult) {
-        header("Location:supplier details.php");
+        header("Location:details.php");
     } else {
         echo "Error deleting employee record: " . mysqli_error($conn);
     }

@@ -73,11 +73,11 @@
     </style>
 </head>
 <body>
-    <?php include_once 'server.php'; ?>
+    <?php include_once __DIR__ . '/../../config/database.php'; ?>
 
     <div class="details">
-        <a href="admin login.html">Log Out</a>
-        <a class="alink" href="supplier details.php">Supplier Database</a>
+        <a href="../admin/login.html">Log Out</a>
+        <a class="alink" href="../supplier/details.php">Supplier Database</a>
         <h1>Customer Details</h1>
         <table>
             <thead>
@@ -104,8 +104,8 @@
                         echo "<td>" . $row['name'] . "</td>";
                         echo "<td>" . $row['email'] . "</td>";
                         echo "<td>" . $row['address'] . "</td>";
-                        echo "<td><a href='customer update.html'><button>UPDATE</button></a></td>";
-                        echo "<td><a href='customer delete.php?id=" . $row["cid"] . "'><button>DELETE</button></a></td>";
+                        echo "<td><a href='update.html'><button>UPDATE</button></a></td>";
+                        echo "<td><a href='delete.php?id=" . $row["cid"] . "'><button>DELETE</button></a></td>";
                         echo "</tr>";
                     }
                 } else {
