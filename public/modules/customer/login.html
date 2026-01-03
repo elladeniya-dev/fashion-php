@@ -1,124 +1,227 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="../../assets/css/login.css">
-        <style>
-            *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    transition: .2s;
-    outline: none;
-    text-transform: capitalize;
-    text-decoration: none;
-}
-html{
-    font-size: 62.5%;
-    scroll-behavior: smooth;
-}
-.header{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 7%;
-    background-color: white;
-    z-index: 100000;
-}
-.header #logo{
-    font-size: 3.5rem;
-    color: black;
-}
-.navbar a{
-    color: black;
-    font-size: 1.7rem;
-    margin-left: 1rem;
-}
-.navbar a:hover{
-    background-color: #ccccd1;
-    color: white;
-    border-radius: 10px;
-    padding: 1rem 3rem;
-}
-.login-btn,
-.signup-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 0 10px;
-    text-decoration: none;
-    color: #000000;
-    background-color: #ffffff; 
-    border-radius: 10px;
-    transition: background-color 0.3s ease;
-    font-size: 1.7rem;
-    margin-left: 1rem;
-    border-radius: 10px;
-    padding: 1rem 3rem;
-    transition: .2s;
-}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login - Fashion Shop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.login-btn:hover,
-.signup-btn:hover {
-    background-color: #ccccd1
-}
-.btn {
-    width:100%;
-    height:45px;
-    background: #7c3d82;
-    border:none;
-    outline:none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1em;
-    color: #fff;
-    font-weight: 500;
-}
-        </style>
-    </head>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #0f7a43 0%, #0a5c32 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #43e97b;
+            box-shadow: 0 0 0 3px rgba(67, 233, 123, 0.1);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .remember-forgot label {
+            display: flex;
+            align-items: center;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .remember-forgot input[type="checkbox"] {
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        .remember-forgot a {
+            color: #0f7a43;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .remember-forgot a:hover {
+            color: #43e97b;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .login-footer p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .login-footer a {
+            color: #0f7a43;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: #43e97b;
+        }
+
+        .role-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .role-links a {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 13px;
+            transition: background 0.3s ease;
+        }
+
+        .role-links a:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                border-radius: 15px;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
 <body>
-    <header class="header">
-        <a href="#" id="logo"><img src="logo.jpg" height="80px" width="auto"></a>
-        <nav class="navbar">
-            <a href="../../page.html">Home</a>
-            <a href="#">Products</a>
-            <a href="#">contact</a>
-            <a href="../../about.html">About</a>
-        </nav>
-        <div class="icons">
-            <a href="login.html"class="login-btn">Login</a>
-            <a href="register.html" class="signup-btn">Sign Up</a>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Customer Login</h1>
+            <p>Shop the latest fashion trends</p>
         </div>
-    </header>
-<div class="wrapper">
-    <div class="form-box login">
-        <h2>Customer Login</h2>
-        <form action="login.php" method="post">
-            <div class="input-box">
-                <span class="icon"></span>
-                <input type="text" required name="uname">
-                <label>User name</label>
+        <div class="login-body">
+            <form action="login.php" method="post">
+                <div class="form-group">
+                    <label for="uname">Username</label>
+                    <input type="text" id="uname" name="uname" required placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn-login" name="login">Login</button>
+            </form>
+            <div class="login-footer">
+                <p>Don't have an account? <a href="register.html">Register</a></p>
+                <p style="margin-top:10px">Login as:</p>
+                <div class="role-links">
+                    <a href="../admin/login.html">Admin</a>
+                    <a href="../supplier/login.html">Supplier</a>
+                </div>
             </div>
-            <div class="input-box">
-                <span class="icon"></span>
-                <input type="password" required name="password">
-                <label>Password</label>
-            </div>
-            <div class="remember-forgot">
-                <label><input type="checkbox">
-                Remember me</label>
-                <a href="#">Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn" name="login">Login</button>
-            <div class="login-register">
-                <p>Don't have an account? <a href="register.html"
-                class="register-link">Register</a></p>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
 </body>
 </html>

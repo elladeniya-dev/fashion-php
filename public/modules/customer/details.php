@@ -1,84 +1,278 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Customers Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details - Fashion Shop</title>
     <style>
-        body {
-            background-color: #f0f0f0;
+        * {
             margin: 0;
             padding: 0;
-            background-image: url("supplier.png");
+            box-sizing: border-box;
         }
 
-        .details {
-            max-width: 800px;
-            margin: 0 auto;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
             padding: 20px;
-            border-radius: 5px;
         }
 
-        h1 {
-            text-align: center;
-            color: yellow;
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            color: #0f7a43;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-links a {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .header-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.3);
+        }
+
+        .header-links a.secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header-links a.secondary:hover {
+            background: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .table-header h2 {
+            color: #0f7a43;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(67, 233, 123, 0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .stat-card p {
+            font-size: 32px;
+            font-weight: 700;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        th, td {
-            padding: 8px;
-            border: 1px solid #ccc;
-            text-align: left;
-            background-color: #fff;
+        thead {
+            background: linear-gradient(135deg, #0f7a43 0%, #0a5c32 100%);
         }
 
         th {
-            background-color: #333;
-            color: #fff;
+            padding: 16px 14px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            font-size: 14px;
         }
 
-        tr:hover {
-            background-color: #ddd;
+        tbody tr {
+            transition: background-color 0.2s ease;
         }
 
-        a {
-            text-decoration: none;
-            color : yellow;
+        tbody tr:hover {
+            background-color: #f8fffe;
         }
 
-        button {
-            background-color: #333;
-            color: #fff;
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 6px;
         }
 
-        button:hover {
-            background-color: #555;
+        .btn-update {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
-        .alink {
-        color:yellow;
-        margin: 300px;
-    }
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
 
+        .btn-delete {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <?php include_once __DIR__ . '/../../../config/database.php'; ?>
 
-    <div class="details">
-        <a href="../admin/login.html">Log Out</a>
-        <a class="alink" href="../supplier/details.php">Supplier Database</a>
-        <h1>Customer Details</h1>
+    <header>
+        <h1>Customer Management</h1>
+        <div class="header-links">
+            <a href="../admin/dashboard.php">Dashboard</a>
+            <a href="../supplier/details.php" class="secondary">Supplier Database</a>
+            <a href="../admin/login.html" class="secondary">Log Out</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="table-header">
+            <h2>All Customers</h2>
+        </div>
+
+        <?php
+        $countQuery = "SELECT COUNT(*) as total FROM customer";
+        $countResult = mysqli_query($conn, $countQuery);
+        $totalCustomers = mysqli_fetch_assoc($countResult)['total'];
+        ?>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Customers</h3>
+                <p><?php echo $totalCustomers; ?></p>
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -86,8 +280,7 @@
                     <th>Customer Name</th>
                     <th>Email</th>
                     <th>Address</th>
-                    <th></th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -100,16 +293,18 @@
                 if ($result && mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>";
-                        echo "<td>" . $row['cid'] . "</td>";
-                        echo "<td>" . $row['name'] . "</td>";
-                        echo "<td>" . $row['email'] . "</td>";
-                        echo "<td>" . $row['address'] . "</td>";
-                        echo "<td><a href='update.html'><button>UPDATE</button></a></td>";
-                        echo "<td><a href='delete.php?id=" . $row["cid"] . "'><button>DELETE</button></a></td>";
+                        echo "<td>" . htmlspecialchars($row['cid']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['address']) . "</td>";
+                        echo "<td>";
+                        echo "<a href='update.html' class='action-btn btn-update'>Update</a>";
+                        echo "<a href='delete.php?id=" . $row["cid"] . "' class='action-btn btn-delete' onclick='return confirm(\"Are you sure you want to delete this customer?\")'>Delete</a>";
+                        echo "</td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='4'>No customer data found.</td></tr>";
+                    echo "<tr><td colspan='5'><div class='empty-state'><p>No customer data found.</p></div></td></tr>";
                 }
 
                 mysqli_close($conn);
