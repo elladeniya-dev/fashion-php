@@ -11,6 +11,7 @@ require_once __DIR__ . '/../../../config/database.php';
 $counts = [
     'customers' => 0,
     'suppliers' => 0,
+    'pending_suppliers' => 0,
     'products' => 0,
     'pending_orders' => 0,
     'pending_products' => 0,
@@ -20,6 +21,7 @@ $counts = [
 $queries = [
     'customers' => "SELECT COUNT(*) AS c FROM customer",
     'suppliers' => "SELECT COUNT(*) AS c FROM supplier",
+    'pending_suppliers' => "SELECT COUNT(*) AS c FROM supplier WHERE status = 'pending'",
     'products' => "SELECT COUNT(*) AS c FROM products",
     'pending_orders' => "SELECT COUNT(*) AS c FROM orders WHERE status = 'pending'",
     'pending_products' => "SELECT COUNT(*) AS c FROM products WHERE status = 'pending'",
@@ -103,7 +105,7 @@ $conn->close();
         <div class="top-links">
             <a href="orders.php">Orders</a>
             <a href="products.php">Products</a>
-            <a href="../supplier/details.php">Suppliers</a>
+            <a href="suppliers.php">Suppliers</a>
             <a href="../customer/details.php">Customers</a>
             <a href="login.html">Logout</a>
         </div>
@@ -112,10 +114,11 @@ $conn->close();
     <div class="grid">
         <div class="card"><h3>Customers</h3><div class="value"><?php echo $counts['customers']; ?></div></div>
         <div class="card"><h3>Suppliers</h3><div class="value"><?php echo $counts['suppliers']; ?></div></div>
+        <div class="card alert"><h3>Pending Suppliers</h3><div class="value"><?php echo $counts['pending_suppliers']; ?></div></div>
         <div class="card"><h3>Products</h3><div class="value"><?php echo $counts['products']; ?></div></div>
-        <div class="card"><h3>Pending Orders</h3><div class="value"><?php echo $counts['pending_orders']; ?></div></div>
-        <div class="card"><h3>Pending Products</h3><div class="value"><?php echo $counts['pending_products']; ?></div></div>
-        <div class="card"><h3>Low Stock (&lt;10)</h3><div class="value"><?php echo $counts['low_stock']; ?></div></div>
+        <div class="card alert"><h3>Pending Orders</h3><div class="value"><?php echo $counts['pending_orders']; ?></div></div>
+        <div class="card alert"><h3>Pending Products</h3><div class="value"><?php echo $counts['pending_products']; ?></div></div>
+        <div class="card warning"><h3>Low Stock (&lt;10)</h3><div class="value"><?php echo $counts['low_stock']; ?></div></div>
     </div>
 
     <section>
