@@ -1,6 +1,7 @@
-🧵 Supplier–Customer Coordination & Inventory-Aware Order Management System
+# 🧵 Supplier–Customer Coordination Portal
 
-A full-stack PHP & MySQL web application designed for small fashion retail and wholesale operations, providing structured coordination between admins, suppliers, and customers—without the complexity of a full ERP system.
+A full-stack PHP & MySQL web application designed for small fashion retail and wholesale operations, enabling inventory-aware ordering, admin-controlled approval workflows, and audit-logged operations—without the complexity of a full ERP system.
+
 
 🚀 What This System Does
 👑 Admin Capabilities
